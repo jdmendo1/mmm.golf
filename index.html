@@ -193,6 +193,17 @@
   .join .btn{margin-top:32px}
   .tag{display:inline-block;background:var(--green);color:var(--cream);font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;padding:7px 14px;border-radius:999px;margin-bottom:20px}
 
+  /* SIGNUP FORM */
+  .signup{max-width:540px;margin:30px auto 0}
+  .signup-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .signup-row input{flex:1;min-width:240px;padding:15px 18px;border-radius:var(--r-sm);border:1.5px solid var(--green);background:#fff;color:var(--green);font-family:var(--body);font-size:1rem;font-weight:500}
+  .signup-row input::placeholder{color:#6b8275}
+  .signup-row input:focus{outline:none;border-color:var(--green-deep);box-shadow:0 0 0 3px rgba(2,54,42,.18)}
+  .signup-row .btn{margin-top:0}
+  .signup-msg{margin-top:16px;font-family:var(--display);font-style:italic;font-size:1.05rem;min-height:1.2em;color:var(--green)}
+  .signup-msg.err{font-style:normal;font-family:var(--body);font-weight:600;font-size:.95rem;color:#6e1d1d}
+  .signup-note{margin-top:10px;font-size:.78rem;color:#3c5042;opacity:.8}
+
   /* FOOTER */
   footer{background:var(--green-deep);color:var(--cream-mute);padding:54px 0 40px;border-top:1px solid rgba(184,147,77,.4)}
   .foot-inner{display:flex;justify-content:space-between;align-items:center;gap:26px;flex-wrap:wrap}
@@ -352,7 +363,14 @@
     <span class="tag reveal">By Invitation</span>
     <h2 class="reveal">Think you've got a spot in the field?</h2>
     <p class="lead reveal">The migration happens once a year. One week, the same core crew, and a few new faces if they earn it. A spot in the field is not bought, it is offered, and it is one of the better honors going.</p>
-    <a href="mailto:hello@mmmchampionship.com" class="btn btn-greenfill reveal">Request a Spot in Next Year's Championship</a>
+    <div class="signup reveal">
+      <div class="signup-row">
+        <input id="suEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Your email address">
+        <button id="suBtn" class="btn btn-greenfill" type="button">Request a Spot</button>
+      </div>
+      <p id="suMsg" class="signup-msg" role="status" aria-live="polite"></p>
+      <p class="signup-note">Drop your email and the committee will be in touch. One week a year, by invitation.</p>
+    </div>
   </div>
 </section>
 
@@ -377,6 +395,28 @@
   const cio=new IntersectionObserver((es)=>{es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,t=+el.dataset.count;let n=0;const step=Math.max(1,Math.round(t/24));const tick=()=>{n+=step;if(n>=t){el.textContent=t}else{el.textContent=n;requestAnimationFrame(tick)}};tick();cio.unobserve(el)})},{threshold:.6});
   document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
   document.querySelector('.nav-toggle').addEventListener('click',()=>{const l=document.querySelector('.nav-links');const open=l.style.display==='flex';l.style.display=open?'':'flex';if(!open){l.style.position='absolute';l.style.flexDirection='column';l.style.top='100%';l.style.left='0';l.style.right='0';l.style.background='var(--green)';l.style.padding='18px 30px';l.style.borderBottom='1px solid rgba(184,147,77,.45)'}});
+
+  // email signup -> Formsubmit (delivers to inbox)
+  (function(){
+    var btn=document.getElementById('suBtn');
+    var input=document.getElementById('suEmail');
+    var msg=document.getElementById('suMsg');
+    if(!btn||!input)return;
+    var ENDPOINT='https://formsubmit.co/ajax/jdmendo1@gmail.com';
+    function valid(e){return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);}
+    function submit(){
+      var email=input.value.trim();
+      if(!valid(email)){msg.textContent='Please enter a valid email address.';msg.className='signup-msg err';return;}
+      btn.disabled=true;var label=btn.textContent;btn.textContent='Sending...';
+      fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({email:email,_subject:'New MMM Championship sign-up',_template:'table',_captcha:'false'})})
+        .then(function(r){if(!r.ok)throw new Error('bad');return r.json();})
+        .then(function(){document.querySelector('.signup-row').style.display='none';document.querySelector('.signup-note').style.display='none';msg.textContent="You're on the list. The committee will be in touch.";msg.className='signup-msg';})
+        .catch(function(){msg.textContent='Something went wrong, please try again in a moment.';msg.className='signup-msg err';btn.disabled=false;btn.textContent=label;});
+    }
+    btn.addEventListener('click',submit);
+    input.addEventListener('keydown',function(e){if(e.key==='Enter')submit();});
+  })();
 </script>
 </body>
 </html>
