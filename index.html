@@ -367,14 +367,7 @@
     <span class="tag reveal">By Invitation</span>
     <h2 class="reveal">Think you've got a spot in the field?</h2>
     <p class="lead reveal">The migration happens once a year. One week, the same core crew, and a few new faces if they earn it. A spot in the field is not bought, it is offered, and it is one of the better honors going.</p>
-    <div class="signup reveal">
-      <div class="signup-row">
-        <input id="suEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Your email address">
-        <button id="suBtn" class="btn btn-greenfill" type="button">Request a Spot</button>
-      </div>
-      <p id="suMsg" class="signup-msg" role="status" aria-live="polite"></p>
-      <p class="signup-note">Drop your email and the committee will be in touch. One week a year, by invitation.</p>
-    </div>
+    <a href="mailto:jdmendo1@gmail.com?subject=Requesting%20a%20spot%20in%20the%20MMM%20Championship&body=Hi%2C%20I%20would%20like%20to%20learn%20more%20about%20the%20MMM%20Championship%20and%20request%20a%20spot%20in%20the%20field." class="btn btn-greenfill reveal">Request a Spot in Next Year's Championship</a>
   </div>
 </section>
 
@@ -402,29 +395,6 @@
   const cio=new IntersectionObserver((es)=>{es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,t=+el.dataset.count;let n=0;const step=Math.max(1,Math.round(t/24));const tick=()=>{n+=step;if(n>=t){el.textContent=t}else{el.textContent=n;requestAnimationFrame(tick)}};tick();cio.unobserve(el)})},{threshold:.6});
   document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
   document.querySelector('.nav-toggle').addEventListener('click',()=>{const l=document.querySelector('.nav-links');const open=l.style.display==='flex';l.style.display=open?'':'flex';if(!open){l.style.position='absolute';l.style.flexDirection='column';l.style.top='100%';l.style.left='0';l.style.right='0';l.style.background='var(--green)';l.style.padding='18px 30px';l.style.borderBottom='1px solid rgba(184,147,77,.45)'}});
-
-  // email signup -> Formsubmit (delivers to inbox)
-  (function(){
-    var btn=document.getElementById('suBtn');
-    var input=document.getElementById('suEmail');
-    var msg=document.getElementById('suMsg');
-    if(!btn||!input)return;
-    var ENDPOINT='https://formsubmit.co/ajax/jdmendo1@gmail.com';
-    var AUTORESP='Thanks for throwing your name in for the MMM Championship.\n\nA quick bit of background. The MMM is one week a year: a crew that grows every season, every club in the bag, a few new destinations, and a belt that goes to whoever pulls off something nobody saw coming. It has been running since 2020 and only gets better.\n\nHere is what happens next. The committee keeps a running list, sets the field once a year, and reaches out when a spot and the next stop come together. Until then, consider yourself officially on the radar.\n\nWhile you wait, follow the migration on Instagram at @mmmchampionship. That is where the courses, the belt, and the field show up first.\n\nIf you want us to know who you are, how you found us, or where you would send the migration next, just reply to this email. We read every one.\n\nGlad to have you interested. Welcome to the migration.\n\nThe President\nMMM Championship\nmmm.golf';
-    function valid(e){return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);}
-    function submit(){
-      var email=input.value.trim();
-      if(!valid(email)){msg.textContent='Please enter a valid email address.';msg.className='signup-msg err';return;}
-      btn.disabled=true;var label=btn.textContent;btn.textContent='Sending...';
-      fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body:JSON.stringify({email:email,_subject:'New sign-up from the mmm.golf site',_replyto:email,_autoresponse:AUTORESP,_template:'table',_captcha:'false'})})
-        .then(function(r){if(!r.ok)throw new Error('bad');return r.json();})
-        .then(function(){document.querySelector('.signup-row').style.display='none';document.querySelector('.signup-note').style.display='none';msg.textContent="You're on the list. The committee will be in touch.";msg.className='signup-msg';})
-        .catch(function(){msg.textContent='Something went wrong, please try again in a moment.';msg.className='signup-msg err';btn.disabled=false;btn.textContent=label;});
-    }
-    btn.addEventListener('click',submit);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter')submit();});
-  })();
 </script>
 </body>
 </html>
